@@ -15,8 +15,18 @@ function App() {
   const classes = useStyles();
   const [currentQuesId, setCurrentQuesId] = useState(questions[0].id);
   const [currentQuestions, setCurrentQuestions] = useState(null);
-  const [dones, setDones] = useState([])
+  const [dones, setDones] = useState( [])
 
+  useState(() => {
+    const doneRaw = JSON.parse(localStorage.getItem('doneIds'))
+    if(doneRaw) {
+      const dones = Object.keys(doneRaw).map(Number)
+      if(dones && dones.length > 0) {
+        setDones(dones)
+      }
+    }
+
+  },[])
   const listButton = () => {
     return questions.map((question, index) => {
       let isDone = dones.filter(doneId => question.id === doneId).length > 0
@@ -28,7 +38,9 @@ function App() {
     });
   };
   const onDone = (doneId) => {
-    console.log("go here");
+    const doneIds = JSON.parse(localStorage.getItem('doneIds')) || {}
+    doneIds[doneId] = 1
+    localStorage.setItem('doneIds', JSON.stringify(doneIds))
     setDones([...dones, doneId])
   };
 
